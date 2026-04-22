@@ -1,0 +1,3279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>AI Food Safety Framework</title>
+
+<style>
+  :root {
+    --bg: #091018;
+    --bg-soft: #0f1824;
+    --bg-elevated: rgba(255,255,255,0.045);
+    --bg-panel: rgba(16, 27, 39, 0.92);
+    --line: rgba(255,255,255,0.1);
+    --line-strong: rgba(255,255,255,0.18);
+    --text: #f7fbff;
+    --text-soft: #dce8f2;
+    --text-muted: #a8bccd;
+    --teal: #17b0b5;
+    --teal-soft: #7ae2de;
+    --orange: #f38a34;
+    --orange-soft: #ffc38f;
+    --green: #51c58b;
+    --purple: #8f82ff;
+    --shadow: 0 24px 60px rgba(0,0,0,0.28);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --container: 1220px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(23,176,181,0.16), transparent 28%),
+      radial-gradient(circle at 85% 18%, rgba(243,138,52,0.14), transparent 24%),
+      linear-gradient(180deg, #081018 0%, #0a1220 52%, #0b1320 100%);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(circle at center, black 35%, transparent 82%);
+    opacity: 0.35;
+  }
+
+  [data-lang="fr"] .lang-en,
+  [data-lang="en"] .lang-fr {
+    display: none !important;
+  }
+
+  .lang-fr,
+  .lang-en {
+    display: inline;
+  }
+
+  .container {
+    width: min(calc(100% - 2.4rem), var(--container));
+    margin: 0 auto;
+  }
+
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 1200;
+    background: linear-gradient(90deg, var(--teal), var(--orange));
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    backdrop-filter: blur(20px);
+    background: rgba(9, 16, 24, 0.82);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-inner {
+    width: min(calc(100% - 2.4rem), var(--container));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .brand-badge {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.95rem;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--teal), var(--orange));
+    color: #041018;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    box-shadow: 0 16px 28px rgba(23,176,181,0.2);
+    flex: 0 0 auto;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
+  .brand-title {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-subtitle {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .nav-link,
+  .mobile-link,
+  .lang-btn,
+  .menu-btn,
+  .hero-button,
+  .flip-toggle,
+  .flip-close {
+    font: inherit;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-link {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.62rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: 0.22s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--text);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid var(--line);
+  }
+
+  .lang-btn {
+    min-width: 3rem;
+    padding: 0.45rem 0.78rem;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: 0.2s ease;
+  }
+
+  .lang-btn.active {
+    background: linear-gradient(135deg, rgba(23,176,181,0.22), rgba(243,138,52,0.22));
+    color: var(--text);
+  }
+
+  .menu-btn {
+    display: none;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.95rem;
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    border: 1px solid var(--line);
+    position: relative;
+  }
+
+  .menu-btn span,
+  .menu-btn::before,
+  .menu-btn::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: 0.22s ease;
+  }
+
+  .menu-btn span { top: 1.37rem; }
+  .menu-btn::before { top: 0.98rem; }
+  .menu-btn::after { top: 1.76rem; }
+
+  .menu-btn[aria-expanded="true"] span {
+    opacity: 0;
+  }
+
+  .menu-btn[aria-expanded="true"]::before {
+    transform: translateY(0.39rem) rotate(45deg);
+  }
+
+  .menu-btn[aria-expanded="true"]::after {
+    transform: translateY(-0.39rem) rotate(-45deg);
+  }
+
+  .mobile-menu {
+    display: none;
+    width: min(calc(100% - 2rem), var(--container));
+    margin: 0 auto 0.9rem;
+    padding: 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 1.1rem;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow);
+  }
+
+  .mobile-menu.open {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .mobile-link {
+    width: 100%;
+    text-align: left;
+    padding: 0.9rem 1rem;
+    border-radius: 0.95rem;
+    background: transparent;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+  }
+
+  .mobile-link:hover {
+    background: rgba(255,255,255,0.055);
+  }
+
+  main {
+    padding-top: 5.6rem;
+  }
+
+  section {
+    padding: 5.5rem 0 2.5rem;
+  }
+
+  .hero {
+    min-height: calc(100svh - 5.6rem);
+    display: grid;
+    align-items: center;
+    padding-top: 2rem;
+  }
+
+  .hero-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 2rem;
+    background:
+      radial-gradient(circle at top left, rgba(23,176,181,0.18), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(243,138,52,0.16), transparent 24%),
+      rgba(255,255,255,0.035);
+    padding: 2.4rem;
+    box-shadow: var(--shadow);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.85fr;
+    gap: 2rem;
+    align-items: end;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(23,176,181,0.1);
+    border: 1px solid rgba(23,176,181,0.22);
+    color: var(--teal-soft);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.15rem;
+  }
+
+  .hero-title {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+    max-width: 32ch;
+  }
+
+  .hero-title .accent-gen { color: var(--orange-soft); }
+  .hero-title .accent-det { color: var(--teal-soft); }
+
+  .hero-desc {
+    max-width: 62ch;
+    color: var(--text-soft);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 1.6rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-button {
+    min-height: 3.15rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: 0.95rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: 0.22s ease;
+  }
+
+  .hero-button.primary {
+    background: linear-gradient(135deg, var(--teal), #0d7d88);
+    color: #041018;
+    box-shadow: 0 18px 34px rgba(23,176,181,0.26);
+  }
+
+  .hero-button.secondary {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+  }
+
+  .hero-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .hero-aside {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .stat-card {
+    border-radius: 1.2rem;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.045);
+    padding: 1rem 1rem 0.95rem;
+  }
+
+  .stat-value {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: 2.1rem;
+    line-height: 1;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .stat-label {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .stat-note {
+    font-size: 0.82rem;
+    color: var(--text-soft);
+  }
+
+  .section-intro {
+    display: grid;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    max-width: 58rem;
+  }
+
+  .section-pill {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.38rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
+
+  .section-pill.review { color: var(--orange-soft); background: rgba(243,138,52,0.1); border-color: rgba(243,138,52,0.2); }
+  .section-pill.dual { color: var(--teal-soft); background: rgba(23,176,181,0.1); border-color: rgba(23,176,181,0.2); }
+  .section-pill.arch { color: #bdb6ff; background: rgba(143,130,255,0.12); border-color: rgba(143,130,255,0.18); }
+  .section-pill.plan { color: #b7f2cf; background: rgba(81,197,139,0.12); border-color: rgba(81,197,139,0.18); }
+
+  .section-title {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: clamp(1.9rem, 3.4vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .section-desc {
+    color: var(--text-soft);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .review-grid,
+  .principles-grid,
+  .phase-grid,
+  .dashboard-grid,
+  .roadmap-grid {
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .review-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .review-card,
+  .principle-card,
+  .phase-card,
+  .schema-card,
+  .dashboard-card,
+  .roadmap-card,
+  .flip-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.04);
+    box-shadow: var(--shadow);
+  }
+
+  .review-card,
+  .phase-card,
+  .dashboard-card,
+  .roadmap-card,
+  .schema-card {
+    padding: 1.4rem;
+  }
+
+  .review-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .review-title,
+  .phase-title,
+  .dashboard-title,
+  .roadmap-title,
+  .schema-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+  }
+
+  .review-badge {
+    padding: 0.28rem 0.58rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .review-badge.ok { color: #b7f2cf; background: rgba(81,197,139,0.14); }
+  .review-badge.fix { color: #ffd3a8; background: rgba(243,138,52,0.14); }
+  .review-badge.done { color: #b9f5f2; background: rgba(23,176,181,0.14); }
+
+  .review-list,
+  .principle-list,
+  .phase-list,
+  .dashboard-list,
+  .roadmap-list {
+    list-style: none;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .review-list li,
+  .principle-list li,
+  .phase-list li,
+  .dashboard-list li,
+  .roadmap-list li {
+    position: relative;
+    padding-left: 1rem;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+  }
+
+  .review-list li::before,
+  .principle-list li::before,
+  .phase-list li::before,
+  .dashboard-list li::before,
+  .roadmap-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62rem;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--orange));
+  }
+
+  .principles-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .principle-card {
+    padding: 1.6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .principle-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -10% -32% auto;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 50%;
+    opacity: 0.08;
+    background: currentColor;
+  }
+
+  .principle-card.generative {
+    color: var(--orange-soft);
+    border-color: rgba(243,138,52,0.22);
+    background: linear-gradient(180deg, rgba(243,138,52,0.08), rgba(255,255,255,0.03));
+  }
+
+  .principle-card.deterministic {
+    color: var(--teal-soft);
+    border-color: rgba(23,176,181,0.22);
+    background: linear-gradient(180deg, rgba(23,176,181,0.08), rgba(255,255,255,0.03));
+  }
+
+  .principle-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .principle-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #071018;
+    background: currentColor;
+  }
+
+  .principle-kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .principle-title {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.45rem;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .principle-desc {
+    color: var(--text-soft);
+    margin-bottom: 1rem;
+    max-width: 60ch;
+  }
+
+  .phase-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .phase-card {
+    position: relative;
+  }
+
+  .phase-num {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .phase-caption {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .phase-desc {
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+  }
+
+  .phase-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.95rem;
+  }
+
+  .phase-tag {
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid var(--line);
+    color: var(--text-soft);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .schema-wrap {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1.2rem;
+    align-items: start;
+  }
+
+  .schema-visual {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .schema-flow {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.85rem;
+    align-items: stretch;
+  }
+
+  /* 3D Flow Diagram */
+  .flow-3d-container {
+    perspective: 1200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0 3rem;
+    min-height: 350px;
+  }
+
+  .flow-3d {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    transform-style: preserve-3d;
+    animation: rotate3d 20s linear infinite;
+  }
+
+  @keyframes rotate3d {
+    0% { transform: rotateY(0deg) rotateX(15deg); }
+    100% { transform: rotateY(360deg) rotateX(15deg); }
+  }
+
+  .flow-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    border: 2px solid;
+    background: rgba(10, 15, 25, 0.9);
+  }
+
+  .flow-layer.collection-layer {
+    transform: rotateY(0deg) translateZ(60px);
+    border-color: var(--purple);
+    box-shadow: 0 0 30px rgba(143, 130, 255, 0.3), inset 0 0 30px rgba(143, 130, 255, 0.1);
+  }
+
+  .flow-layer.storage-layer {
+    transform: rotateY(60deg) translateZ(60px);
+    border-color: var(--green);
+    box-shadow: 0 0 30px rgba(81, 197, 139, 0.3), inset 0 0 30px rgba(81, 197, 139, 0.1);
+  }
+
+  .flow-layer.analytics-layer {
+    transform: rotateY(120deg) translateZ(60px);
+    border-color: var(--teal);
+    box-shadow: 0 0 30px rgba(23, 176, 181, 0.3), inset 0 0 30px rgba(23, 176, 181, 0.1);
+  }
+
+  .flow-layer.decision-layer {
+    transform: rotateY(180deg) translateZ(60px);
+    border-color: var(--orange);
+    box-shadow: 0 0 30px rgba(243, 138, 52, 0.3), inset 0 0 30px rgba(243, 138, 52, 0.1);
+  }
+
+  .flow-layer.action-layer {
+    transform: rotateY(240deg) translateZ(60px);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.05);
+  }
+
+  .flow-layer.center {
+    transform: translateZ(0);
+    border-color: rgba(255, 255, 255, 0.3);
+    background: radial-gradient(circle, rgba(23, 176, 181, 0.2) 0%, rgba(10, 15, 25, 0.95) 70%);
+  }
+
+  .flow-layer-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .flow-layer-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .collection-layer .flow-layer-label { color: var(--purple); }
+  .storage-layer .flow-layer-label { color: var(--green); }
+  .analytics-layer .flow-layer-label { color: var(--teal); }
+  .decision-layer .flow-layer-label { color: var(--orange); }
+  .action-layer .flow-layer-label { color: rgba(255, 255, 255, 0.7); }
+  .center .flow-layer-label { color: var(--teal-soft); }
+
+  /* Flow arrows between layers */
+  .flow-3d::before,
+  .flow-3d::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--purple), var(--teal), var(--orange));
+    transform-origin: left center;
+    opacity: 0.6;
+  }
+
+  .flow-3d::before {
+    transform: translate(-50%, -50%) rotateX(75deg);
+    animation: flowLine1 4s ease-in-out infinite;
+  }
+
+  .flow-3d::after {
+    transform: translate(-50%, -50%) rotateX(-75deg);
+    animation: flowLine2 4s ease-in-out infinite;
+  }
+
+  @keyframes flowLine1 {
+    0%, 100% { opacity: 0.3; width: 200px; }
+    50% { opacity: 1; width: 280px; }
+  }
+
+  @keyframes flowLine2 {
+    0%, 100% { opacity: 0.3; width: 200px; }
+    50% { opacity: 1; width: 280px; }
+  }
+
+  /* Interactive hover effect */
+  .flow-3d-container:hover .flow-3d {
+    animation-play-state: paused;
+  }
+
+  /* Labels positioned around the cube */
+  .flow-label {
+    position: absolute;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* Central hub animation */
+  .central-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--orange));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 0 40px rgba(23, 176, 181, 0.5);
+    animation: pulseHub 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseHub {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 40px rgba(23, 176, 181, 0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 60px rgba(23, 176, 181, 0.7); }
+  }
+
+  /* Data flow particles */
+  .flow-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: particleFlow 3s linear infinite;
+  }
+
+  @keyframes particleFlow {
+    0% { transform: rotate(0deg) translateX(100px) rotate(0deg); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); opacity: 0; }
+  }
+
+  .schema-node {
+    position: relative;
+    border-radius: 1.2rem;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.04);
+    padding: 1rem;
+    min-height: 10.4rem;
+  }
+
+  .schema-node::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -0.65rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-top: 2px solid rgba(255,255,255,0.18);
+    border-right: 2px solid rgba(255,255,255,0.18);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .schema-node:last-child::after {
+    display: none;
+  }
+
+  .schema-node.collection { box-shadow: inset 0 0 0 1px rgba(143,130,255,0.18); }
+  .schema-node.storage { box-shadow: inset 0 0 0 1px rgba(81,197,139,0.18); }
+  .schema-node.analytics { box-shadow: inset 0 0 0 1px rgba(23,176,181,0.18); }
+  .schema-node.generative { box-shadow: inset 0 0 0 1px rgba(243,138,52,0.18); }
+  .schema-node.action { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+
+  .schema-node-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .schema-code {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.8rem;
+    display: grid;
+    place-items: center;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #071018;
+    background: linear-gradient(135deg, var(--teal-soft), var(--orange-soft));
+  }
+
+  .schema-node-title {
+    font-size: 0.94rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .schema-node p,
+  .schema-side p {
+    color: var(--text-soft);
+    font-size: 0.86rem;
+  }
+
+  .schema-side {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .schema-callout {
+    padding: 1.25rem;
+    border-radius: 1.2rem;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .schema-callout strong {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-size: 0.92rem;
+  }
+
+  /* ── Architecture Diagram ─────────────────────────────────────── */
+  .arch-outer {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 1.2rem;
+    align-items: start;
+  }
+
+  .arch-diagram-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .arch-layer-row {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 1.2rem;
+    align-items: center;
+    padding: 1.1rem 1.4rem;
+    border-radius: 1.1rem;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.03);
+    transition: background 0.22s ease;
+  }
+
+  .arch-layer-row:hover { background: rgba(255,255,255,0.055); }
+
+  .arch-layer-row.sources-row    { border-color: rgba(143,130,255,0.28); }
+  .arch-layer-row.collection-row { border-color: rgba(143,130,255,0.22); }
+  .arch-layer-row.data-row       { border-color: rgba(81,197,139,0.28); }
+  .arch-layer-row.analytics-row  { border-color: rgba(23,176,181,0.34); background: rgba(23,176,181,0.04); }
+  .arch-layer-row.llm-row        { border-color: rgba(243,138,52,0.34); background: rgba(243,138,52,0.04); }
+  .arch-layer-row.decision-row   { border-color: rgba(255,255,255,0.2); }
+
+  .arch-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .arch-badge {
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 0.65rem;
+    display: grid;
+    place-items: center;
+    font-size: 0.76rem;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+
+  .arch-row-name {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    line-height: 1.25;
+  }
+
+  .arch-row-sub {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    margin-top: 0.18rem;
+    line-height: 1.3;
+  }
+
+  .arch-chips-zone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.42rem;
+    align-items: center;
+  }
+
+  .ach {
+    padding: 0.28rem 0.62rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 1px solid;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+
+  .ach.purple { color: var(--purple);    border-color: rgba(143,130,255,0.32); background: rgba(143,130,255,0.09); }
+  .ach.green  { color: var(--green);     border-color: rgba(81,197,139,0.3);   background: rgba(81,197,139,0.08);  }
+  .ach.teal   { color: var(--teal-soft); border-color: rgba(23,176,181,0.3);   background: rgba(23,176,181,0.09);  }
+  .ach.orange { color: var(--orange-soft); border-color: rgba(243,138,52,0.3); background: rgba(243,138,52,0.09);  }
+  .ach.white  { color: var(--text-soft); border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); }
+
+  .arch-arrow-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.15rem 1.4rem;
+    min-height: 2.2rem;
+  }
+
+  .arch-vline {
+    width: 1px;
+    height: 1.9rem;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.22), rgba(255,255,255,0.05));
+    border-radius: 999px;
+    flex: 0 0 auto;
+    margin-left: 2.47rem;
+    position: relative;
+  }
+
+  .arch-vline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid rgba(255,255,255,0.22);
+  }
+
+  .arch-arrow-lbl {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  .arch-feedback-row {
+    margin-top: 0.7rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 0.9rem;
+    background: rgba(23,176,181,0.05);
+    border: 1px dashed rgba(23,176,181,0.28);
+    text-align: center;
+  }
+
+  .arch-feedback-label {
+    font-size: 0.74rem;
+    color: var(--teal-soft);
+    line-height: 1.5;
+  }
+
+  /* Use-case cards in review section */
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.2rem;
+  }
+
+  .usecase-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .usecase-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+    flex: 0 0 auto;
+  }
+
+  .usecase-kicker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .usecase-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+
+  .usecase-desc {
+    font-size: 0.86rem;
+    color: var(--text-soft);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .usecase-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .usecase-tag {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .dashboard-micro {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .dashboard-bar {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .dashboard-bar span {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .dashboard-track {
+    height: 0.45rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+
+  .dashboard-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--teal), var(--orange));
+  }
+
+  .flip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.2rem;
+  }
+
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .glossary-grid .flip-card {
+    min-height: 15rem;
+  }
+
+  .glossary-grid .flip-face {
+    padding: 1rem;
+  }
+
+  .glossary-grid .flip-title {
+    font-size: 1rem;
+  }
+
+  .glossary-grid .flip-desc {
+    font-size: 0.8rem;
+  }
+
+  .glossary-grid .flip-kicker {
+    font-size: 0.62rem;
+    padding: 0.22rem 0.5rem;
+  }
+
+  .flip-icon-btn {
+    position: absolute;
+    bottom: 0.8rem;
+    right: 0.8rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line);
+    color: var(--text-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.25s ease;
+  }
+
+  .flip-icon-btn:hover {
+    background: rgba(23,176,181,0.2);
+    color: var(--teal-soft);
+  }
+
+  .flip-icon-btn svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.4s ease;
+  }
+
+  .flip-card.flipped .flip-icon-btn svg {
+    transform: rotate(180deg);
+  }
+
+  .glossary-grid .flip-icon-btn {
+    width: 1.6rem;
+    height: 1.6rem;
+    bottom: 0.6rem;
+    right: 0.6rem;
+  }
+
+  .glossary-grid .flip-icon-btn svg {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .flip-card {
+    perspective: 1600px;
+    min-height: 23rem;
+    position: relative;
+  }
+
+  .flip-inner {
+    position: relative;
+    min-height: inherit;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .flip-card.flipped .flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-face {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem;
+    overflow: hidden;
+  }
+
+  .flip-face.front {
+    background:
+      radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 34%),
+      rgba(255,255,255,0.045);
+  }
+
+  .flip-face.back {
+    transform: rotateY(180deg);
+    background:
+      radial-gradient(circle at top right, rgba(23,176,181,0.14), transparent 34%),
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.04));
+  }
+
+  .flip-kicker {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.32rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .flip-kicker.generative { color: var(--orange-soft); background: rgba(243,138,52,0.12); }
+  .flip-kicker.deterministic { color: var(--teal-soft); background: rgba(23,176,181,0.12); }
+  .flip-kicker.foundation { color: #c9c4ff; background: rgba(143,130,255,0.12); }
+
+  .flip-title {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.24rem;
+    line-height: 1.12;
+    margin-bottom: 0.6rem;
+  }
+
+  .flip-desc {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .flip-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .flip-metric strong {
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+  }
+
+  .flip-metric span {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+
+  .flip-list {
+    list-style: none;
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.8rem;
+    flex: 1;
+  }
+
+  .flip-list li {
+    position: relative;
+    padding-left: 1rem;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+  }
+
+  .flip-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.58rem;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--orange));
+  }
+
+  .flip-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 1rem;
+  }
+
+  .flip-toggle,
+  .flip-close {
+    min-height: 2.7rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 0.9rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    transition: 0.2s ease;
+  }
+
+  .flip-toggle {
+    background: linear-gradient(135deg, rgba(23,176,181,0.2), rgba(243,138,52,0.2));
+    color: var(--text);
+    flex: 1;
+  }
+
+  .flip-close {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+
+  .flip-toggle:hover,
+  .flip-close:hover {
+    transform: translateY(-1px);
+  }
+
+  .roadmap-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .roadmap-step {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 0.88rem;
+    display: grid;
+    place-items: center;
+    font-family: "Segoe UI", "Space Grotesk", system-ui, sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+    background: linear-gradient(135deg, rgba(23,176,181,0.18), rgba(243,138,52,0.18));
+  }
+
+  footer {
+    padding: 2.2rem 0 3rem;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+  }
+
+  footer .container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+    padding-top: 1.4rem;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 1120px) {
+    .hero-grid,
+    .arch-outer,
+    .usecase-grid,
+    .principles-grid,
+    .phase-grid,
+    .dashboard-grid,
+    .flip-grid,
+    .roadmap-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .arch-layer-row {
+      grid-template-columns: 160px 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    html,
+    body {
+      overflow-x: clip;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .menu-btn {
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .nav-inner {
+      width: min(calc(100% - 1.2rem), var(--container));
+      padding: 0.8rem 0;
+    }
+
+    .brand-title {
+      font-size: 0.92rem;
+    }
+
+    .brand-subtitle {
+      font-size: 0.7rem;
+    }
+
+    main {
+      padding-top: 5.1rem;
+    }
+
+    section {
+      padding: 4.3rem 0 2rem;
+    }
+
+    .container {
+      width: min(calc(100% - 1.2rem), var(--container));
+    }
+
+    .hero {
+      min-height: auto;
+      padding-top: 1.1rem;
+    }
+
+    .hero-panel {
+      padding: 1.3rem;
+      border-radius: 1.4rem;
+    }
+
+    .hero-grid,
+    .usecase-grid,
+    .principles-grid,
+    .phase-grid,
+    .arch-outer,
+    .dashboard-grid,
+    .flip-grid,
+    .roadmap-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .arch-layer-row {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .arch-vline {
+      margin-left: 1.5rem;
+    }
+
+    .hero-title {
+      max-width: 100%;
+      font-size: clamp(2rem, 12vw, 3rem);
+    }
+
+    .hero-desc,
+    .section-desc {
+      font-size: 0.96rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+    }
+
+    .hero-button {
+      width: 100%;
+    }
+
+    .review-card,
+    .principle-card,
+    .phase-card,
+    .schema-card,
+    .dashboard-card,
+    .roadmap-card,
+    .flip-face {
+      padding: 1.1rem;
+    }
+
+    .glossary-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .lang-switch {
+      order: -1;
+    }
+
+    .nav-actions {
+      gap: 0.55rem;
+    }
+
+    .phase-tag,
+    .review-badge {
+      font-size: 0.68rem;
+    }
+
+    .glossary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    footer .container {
+      flex-direction: column;
+    }
+
+    .arch-chips-zone {
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .flow-3d {
+      animation: none !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .flow-3d-container {
+      display: none;
+    }
+  }
+
+  .section-image {
+    margin-top: 2rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+    padding: 1rem;
+  }
+
+  .section-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    display: block;
+  }
+
+  .section-image-caption {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.75rem;
+    font-style: italic;
+  }
+</style>
+</head>
+<body data-lang="fr">
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-badge">AI</div>
+      <div class="brand-copy">
+        <div class="brand-title">
+          <span class="lang-fr">AI Food Safety Framework</span>
+          <span class="lang-en">AI Food Safety Framework</span>
+        </div>
+        <div class="brand-subtitle">
+          <span class="lang-fr">Architecture générale, fiable, interactive et bilingue</span>
+          <span class="lang-en">General architecture, reliable, interactive and bilingual</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="nav-links" id="nav-links">
+        <button class="nav-link active" type="button" data-scroll-target="hero">
+          <span class="lang-fr">Accueil</span>
+          <span class="lang-en">Home</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="principles">
+          <span class="lang-fr">Principes</span>
+          <span class="lang-en">Principles</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="phases">
+          <span class="lang-fr">Architecture</span>
+          <span class="lang-en">Architecture</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="schema">
+          <span class="lang-fr">Schéma</span>
+          <span class="lang-en">Diagram</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="explorer">
+          <span class="lang-fr">Cartes</span>
+          <span class="lang-en">Cards</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="roadmap">
+          <span class="lang-fr">Conclusion</span>
+          <span class="lang-en">Conclusion</span>
+        </button>
+        <button class="nav-link" type="button" data-scroll-target="glossary">
+          <span class="lang-fr">Lexique</span>
+          <span class="lang-en">Glossary</span>
+        </button>
+      </div>
+
+      <div class="lang-switch" aria-label="Language switch">
+        <button class="lang-btn active" type="button" data-lang-value="fr">FR</button>
+        <button class="lang-btn" type="button" data-lang-value="en">EN</button>
+      </div>
+
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="mobile-link" type="button" data-scroll-target="hero">
+      <span class="lang-fr">Accueil</span>
+      <span class="lang-en">Home</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="principles">
+      <span class="lang-fr">Principes</span>
+      <span class="lang-en">Principles</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="phases">
+      <span class="lang-fr">Architecture</span>
+      <span class="lang-en">Architecture</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="schema">
+      <span class="lang-fr">Schéma</span>
+      <span class="lang-en">Diagram</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="explorer">
+      <span class="lang-fr">Cartes</span>
+      <span class="lang-en">Cards</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="roadmap">
+      <span class="lang-fr">Conclusion</span>
+      <span class="lang-en">Detailed plan</span>
+    </button>
+    <button class="mobile-link" type="button" data-scroll-target="glossary">
+      <span class="lang-fr">Lexique</span>
+      <span class="lang-en">Glossary</span>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <section id="hero" class="hero">
+    <div class="container">
+      <div class="hero-panel reveal">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-eyebrow">
+              <span class="lang-fr">Framework stratégique</span>
+              <span class="lang-en">Strategic framework</span>
+            </div>
+            <h1 class="hero-title">
+              <span class="lang-fr">L'IA au service de la <span class="accent-det">sécurité des aliments</span> : un double usage — <span class="accent-gen">générative</span> pour explorer et challenger, <span class="accent-det">déterministe</span> pour fiabiliser et pousser l'amélioration continue</span>
+              <span class="lang-en">Make <span class="accent-gen">LLMs / generative AI</span> and <span class="accent-det">validated deterministic tools</span> work together for food safety</span>
+            </h1>
+            <p class="hero-desc">
+              <span class="lang-fr">Une approche en boucle continue : capter le terrain, structurer les donnees, analyser avec fiabilite, visualiser pour decider - et enrichir la base par chaque action posee. la présentation sur ta logique cible : collecte multi-source, bases de données structurées, analyses statistiques robustes, tableaux de bord interactifs, et une couche LLM pensée pour l’échange avec les utilisateurs, l’exploration et l’inventivité sans remplacer les moteurs fiables.</span>
+              <span class="lang-en">This version recenters the presentation on your target logic: multi-source collection, structured databases, robust statistical analysis, interactive dashboards, and an LLM layer designed for user dialogue, exploration and inventiveness without replacing reliable engines.</span>
+            </p>
+            <div class="hero-actions">
+              <button class="hero-button primary" type="button" data-scroll-target="principles">
+                <span class="lang-fr">Voir la logique générale</span>
+                <span class="lang-en">See the general logic</span>
+              </button>
+              <button class="hero-button secondary" type="button" data-scroll-target="schema">
+                <span class="lang-fr">Aller au schéma d’architecture</span>
+                <span class="lang-en">Jump to the architecture diagram</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-aside">
+            <div class="stat-card">
+              <div class="stat-value">3</div>
+              <div class="stat-label">
+                <span class="lang-fr">Blocs principaux</span>
+                <span class="lang-en">Main blocks</span>
+              </div>
+              <div class="stat-note">
+                <span class="lang-fr">Collecte, base de données, décision visuelle et opérationnelle.</span>
+                <span class="lang-en">Collection, data foundation, visual and operational decision support.</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">2</div>
+              <div class="stat-label">
+                <span class="lang-fr">Couches IA</span>
+                <span class="lang-en">AI layers</span>
+              </div>
+              <div class="stat-note">
+                <span class="lang-fr">Une couche générative pour dialoguer, une couche déterministe pour fiabiliser.</span>
+                <span class="lang-en">One generative layer for dialogue, one deterministic layer for reliability.</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">1</div>
+              <div class="stat-label">
+                <span class="lang-fr">Architecture globale</span>
+                <span class="lang-en">Global architecture</span>
+              </div>
+              <div class="stat-note">
+                <span class="lang-fr">Amélioration continue, analyses multi-supports, sources de données diversifiées et enrichissement permanent.</span>
+                <span class="lang-en">Continuous improvement, multi-source analytics, diversified data sources and permanent enrichment.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="review">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill review">
+          <span class="lang-fr">Domaines d’application</span>
+          <span class="lang-en">Application areas</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Trois domaines opérationnels couverts par l'architecture</span>
+          <span class="lang-en">Three operational areas covered by the framework</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">L'architecture s’adapte à des contextes variés : pilotage de la production et de la qualité en temps réel, intelligence terrain et conformité réglementaire, et analyse prédictive à des fins de décision stratégique. Dans chaque cas, les couches déterministe et générative jouent des rôles distincts et complémentaires.</span>
+          <span class="lang-en">The framework adapts to varied contexts: real-time production and quality management, field intelligence and regulatory compliance, and predictive analytics for strategic decision-making. In each case, the deterministic and generative layers play distinct and complementary roles.</span>
+        </p>
+      </div>
+
+      <div class="usecase-grid reveal">
+        <article class="usecase-card">
+          <div class="usecase-icon" style="background: rgba(23,176,181,0.12); color: var(--teal-soft); font-size: 1.5rem;">⚙</div>
+          <div>
+            <div class="usecase-kicker" style="color: var(--teal-soft);">
+              <span class="lang-fr">Production & Qualité</span>
+              <span class="lang-en">Production & Quality</span>
+            </div>
+            <h3 class="usecase-title">
+              <span class="lang-fr">Pilotage qualité et contrôle de production en temps réel</span>
+              <span class="lang-en">Real-time quality management and production control</span>
+            </h3>
+          </div>
+          <p class="usecase-desc">
+            <span class="lang-fr">Surveillance continue des paramètres critiques, détection d’anomalies avant dépassement de seuil, cartes de contrôle SPC et vision industrielle pour l’inspection automatisée.</span>
+            <span class="lang-en">Continuous monitoring of critical parameters, anomaly detection before threshold breach, SPC control charts and industrial vision for automated inspection.</span>
+          </p>
+          <div class="usecase-tags">
+            <span class="usecase-tag">SPC / MSP</span>
+            <span class="usecase-tag">IoT / Capteurs</span>
+            <span class="usecase-tag">Vision AI</span>
+            <span class="usecase-tag">XGBoost</span>
+            <span class="usecase-tag"><span class="lang-fr">Alertes temps réel</span><span class="lang-en">Real-time alerts</span></span>
+          </div>
+        </article>
+
+        <article class="usecase-card">
+          <div class="usecase-icon" style="background: rgba(81,197,139,0.12); color: var(--green); font-size: 1.5rem;">◎</div>
+          <div>
+            <div class="usecase-kicker" style="color: var(--green);">
+              <span class="lang-fr">Conformité & Traçabilité</span>
+              <span class="lang-en">Compliance & Traceability</span>
+            </div>
+            <h3 class="usecase-title">
+              <span class="lang-fr">Intelligence terrain et veille réglementaire automatisée</span>
+              <span class="lang-en">Field intelligence and automated regulatory watch</span>
+            </h3>
+          </div>
+          <p class="usecase-desc">
+            <span class="lang-fr">Suivi des alertes RASFF, gestion des non-conformités et plans d’actions, scoring de risque fournisseur et traçabilité bout-en-bout des flux produits et logistiques.</span>
+            <span class="lang-en">RASFF alert monitoring, non-conformity management and action plans, supplier risk scoring and end-to-end traceability of product and logistics flows.</span>
+          </p>
+          <div class="usecase-tags">
+            <span class="usecase-tag">RASFF</span>
+            <span class="usecase-tag"><span class="lang-fr">Scoring risque</span><span class="lang-en">Risk scoring</span></span>
+            <span class="usecase-tag"><span class="lang-fr">Traçabilité</span><span class="lang-en">Traceability</span></span>
+            <span class="usecase-tag">APIs réglementaires</span>
+            <span class="usecase-tag"><span class="lang-fr">Plans d’action</span><span class="lang-en">Action plans</span></span>
+          </div>
+        </article>
+
+        <article class="usecase-card">
+          <div class="usecase-icon" style="background: rgba(243,138,52,0.12); color: var(--orange-soft); font-size: 1.5rem;">◈</div>
+          <div>
+            <div class="usecase-kicker" style="color: var(--orange-soft);">
+              <span class="lang-fr">Prédiction & Stratégie</span>
+              <span class="lang-en">Prediction & Strategy</span>
+            </div>
+            <h3 class="usecase-title">
+              <span class="lang-fr">Analyse prédictive et aide à la décision stratégique</span>
+              <span class="lang-en">Predictive analytics and strategic decision support</span>
+            </h3>
+          </div>
+          <p class="usecase-desc">
+            <span class="lang-fr">Séries temporelles, modèles prédictifs et scénarios prospectifs pour anticiper les dérives, optimiser les ressources et éclairer les décisions à moyen et long terme.</span>
+            <span class="lang-en">Time series, predictive models and forward-looking scenarios to anticipate drifts, optimize resources and inform medium- and long-term decisions.</span>
+          </p>
+          <div class="usecase-tags">
+            <span class="usecase-tag">ARIMA / Prophet</span>
+            <span class="usecase-tag">Bayésien</span>
+            <span class="usecase-tag">Horizon scanning</span>
+            <span class="usecase-tag"><span class="lang-fr">Scénarios</span><span class="lang-en">Scenarios</span></span>
+            <span class="usecase-tag"><span class="lang-fr">Copilote LLM</span><span class="lang-en">LLM copilot</span></span>
+          </div>
+        </article>
+      </div>
+      <div class="section-image">
+        <img src="extracted_images/page4_img1.png" alt="Applications" />
+        <div class="section-image-caption"><span class="lang-fr">Domaines d'application</span><span class="lang-en">Application areas</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="principles">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill dual">
+          <span class="lang-fr">Principes</span>
+          <span class="lang-en">Principles</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Deux IA, deux missions distinctes et complémentaires</span>
+          <span class="lang-en">Two complementary layers, two different roles</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">L’architecture distingue clairement la couche générative — pour explorer, questionner et contextualiser — de la couche déterministe — pour mesurer, calculer et prédire avec fiabilité. Cette frontière est le socle d’un usage pertinent et auditable de l’IA.</span>
+          <span class="lang-en">The presentation explicitly separates what belongs to LLMs / generative models and what belongs to validated deterministic, statistical or industrial engines. This is the core point to avoid confusion between an “intelligent conversational tool” and a “reliable measurement, calculation or prediction system.”</span>
+        </p>
+      </div>
+
+      <div class="principles-grid reveal">
+        <article class="principle-card generative">
+          <div class="principle-top">
+            <div>
+              <div class="principle-kicker">
+                <span class="lang-fr">Couche générative</span>
+                <span class="lang-en">Generative layer</span>
+              </div>
+              <h3 class="principle-title">
+                <span class="lang-fr">LLM / modèle génératif pour l’échange, l’exploration et l’inventivité</span>
+                <span class="lang-en">LLM / generative model for dialogue, exploration and inventiveness</span>
+              </h3>
+            </div>
+            <div class="principle-icon">LL</div>
+          </div>
+          <p class="principle-desc">
+            <span class="lang-fr">Le LLM n’est pas présenté comme moteur de vérité. Il sert à faciliter l’échange utilisateur, reformuler, challenger des hypothèses, proposer des interprétations, faire émerger des pistes d’action et rendre la base de connaissances navigable en langage naturel.</span>
+            <span class="lang-en">The LLM is not presented as a source of truth. It is used to facilitate user dialogue, reformulate, challenge hypotheses, propose interpretations, generate action paths and make the knowledge base explorable in natural language.</span>
+          </p>
+          <ul class="principle-list">
+            <li><span class="lang-fr">Q&amp;A conversationnel sur procédures, incidents, historiques et tendances.</span><span class="lang-en">Conversational Q&amp;A on procedures, incidents, history and trends.</span></li>
+            <li><span class="lang-fr">Synthèses, reformulations, scénarios “et si”, et préparation de plans d’actions.</span><span class="lang-en">Summaries, reformulations, “what if” scenarios and action-plan preparation.</span></li>
+            <li><span class="lang-fr">Interaction bilingue ou multilingue avec les équipes et utilisateurs.</span><span class="lang-en">Bilingual or multilingual interaction with teams and users.</span></li>
+            <li><span class="lang-fr">Toujours adossé à des sources indexées, à une traçabilité et à des garde-fous.</span><span class="lang-en">Always grounded in indexed sources, traceability and guardrails.</span></li>
+          </ul>
+        </article>
+
+        <article class="principle-card deterministic">
+          <div class="principle-top">
+            <div>
+              <div class="principle-kicker">
+                <span class="lang-fr">Couche déterministe</span>
+                <span class="lang-en">Deterministic layer</span>
+              </div>
+              <h3 class="principle-title">
+                <span class="lang-fr">Outils déterministes et modèles prédictifs fondés sur des règles robustes</span>
+                <span class="lang-en">Deterministic tools and predictive models grounded in robust rules</span>
+              </h3>
+            </div>
+            <div class="principle-icon">DT</div>
+          </div>
+          <p class="principle-desc">
+            <span class="lang-fr">Cette couche porte les résultats fiables : seuils, contrôles, modèles validés, lois statistiques, corrélations référencées, vision industrielle, SPC, séries temporelles ou modèles de classification documentés. C’est là que se prennent les décisions calculées.</span>
+            <span class="lang-en">This layer carries the reliable outputs: thresholds, controls, validated models, statistical laws, referenced correlations, industrial vision, SPC, time series or documented classification models. This is where calculated decisions are produced.</span>
+          </p>
+          <ul class="principle-list">
+            <li><span class="lang-fr">SPC, cartes de contrôle, détection d’anomalies et analyse multivariée.</span><span class="lang-en">SPC, control charts, anomaly detection and multivariate analysis.</span></li>
+            <li><span class="lang-fr">ARIMA, ETS, Prophet, XGBoost, Random Forest, régression logistique, modèles bayésiens.</span><span class="lang-en">ARIMA, ETS, Prophet, XGBoost, Random Forest, logistic regression, Bayesian models.</span></li>
+            <li><span class="lang-fr">Vision, capteurs, WGS, seuils physiques et contrôles temps réel.</span><span class="lang-en">Vision, sensors, WGS, physical thresholds and real-time control.</span></li>
+            <li><span class="lang-fr">Documentation des hypothèses, validation, recalibrage et auditabilité des résultats.</span><span class="lang-en">Documented assumptions, validation, recalibration and auditability of results.</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="phases">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill arch">
+          <span class="lang-fr">Architecture générale</span>
+          <span class="lang-en">General architecture</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Une logique en trois étages : collecte, base structurée, décision</span>
+          <span class="lang-en">A three-level logic: collection, structured foundation, decision</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">L'architecture est organisée pour reboucler en continu : on collecte, on structure, on analyse, on visualise, on décide, puis on enrichit à nouveau la base. Le système devient plus utile à mesure qu’il capte mieux le terrain et l’historique.</span>
+          <span class="lang-en">The framework is organized as a continuous loop: collect, structure, analyze, visualize, decide, then enrich the foundation again. The system becomes more useful as it captures both field reality and historical data.</span>
+        </p>
+      </div>
+
+      <div class="phase-grid reveal">
+        <article class="phase-card">
+          <div class="phase-num">01</div>
+          <div class="phase-caption">
+            <span class="lang-fr">Collecte</span>
+            <span class="lang-en">Collection</span>
+          </div>
+          <h3 class="phase-title">
+            <span class="lang-fr">Collecter les données manuelles, automatiques et externes</span>
+            <span class="lang-en">Collect manual, automated and external data</span>
+          </h3>
+          <p class="phase-desc">
+            <span class="lang-fr">Le système doit capter des données saisies par des humains, des capteurs et caméras, et des flux internes ou externes comme des bases, newsletters, open data ou fournisseurs privés.</span>
+            <span class="lang-en">The system must capture data entered by humans, by sensors and cameras, and from internal or external feeds such as databases, newsletters, open data or private providers.</span>
+          </p>
+          <ul class="phase-list">
+            <li><span class="lang-fr">Papier vers numérique via mobile, tablette, PC, OCR et formulaires guidés.</span><span class="lang-en">Paper-to-digital through mobile, tablet, PC, OCR and guided forms.</span></li>
+            <li><span class="lang-fr">Collecte quasi continue via sondes, caméras, balances, température, humidité, CO₂, pH, vibration.</span><span class="lang-en">Near-continuous collection via probes, cameras, scales, temperature, humidity, CO₂, pH, vibration.</span></li>
+            <li><span class="lang-fr">Veille automatisée via APIs, bases internes, newsletters, open data, sources réglementaires et bases privées.</span><span class="lang-en">Automated watch through APIs, internal bases, newsletters, open data, regulatory sources and private data feeds.</span></li>
+          </ul>
+          <div class="phase-tags">
+            <span class="phase-tag">Mobile</span>
+            <span class="phase-tag">OCR</span>
+            <span class="phase-tag">IoT</span>
+            <span class="phase-tag">CV</span>
+            <span class="phase-tag">APIs</span>
+          </div>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-num">02</div>
+          <div class="phase-caption">
+            <span class="lang-fr">Base structurée</span>
+            <span class="lang-en">Structured foundation</span>
+          </div>
+          <h3 class="phase-title">
+            <span class="lang-fr">Construire des bases connectées, indexables et enrichissables</span>
+            <span class="lang-en">Build connected, searchable and enrichable data foundations</span>
+          </h3>
+          <p class="phase-desc">
+            <span class="lang-fr">Les données deviennent utiles lorsqu’elles sont nettoyées, normalisées, liées entre elles, historisées et recherchables. C’est la condition pour faire des analyses robustes et exploitables.</span>
+            <span class="lang-en">Data becomes useful when it is cleaned, normalized, linked, historized and searchable. This is the condition for robust and actionable analysis.</span>
+          </p>
+          <ul class="phase-list">
+            <li><span class="lang-fr">Bases relationnelles, time series, document stores, graphes de connaissances et index de recherche.</span><span class="lang-en">Relational databases, time-series stores, document stores, knowledge graphs and search indexes.</span></li>
+            <li><span class="lang-fr">Filtres, tris, corrélations, tendances, croissance, saisonnalité, causalité prudente et scoring de risque.</span><span class="lang-en">Filters, sorting, correlations, trends, growth, seasonality, cautious causality and risk scoring.</span></li>
+            <li><span class="lang-fr">Enrichissement local, cloud, partagé, manuel ou automatisé selon les droits et les workflows.</span><span class="lang-en">Local, cloud or shared enrichment, manual or automated depending on rights and workflows.</span></li>
+          </ul>
+          <div class="phase-tags">
+            <span class="phase-tag">SQL</span>
+            <span class="phase-tag">Time series</span>
+            <span class="phase-tag">Search</span>
+            <span class="phase-tag">Knowledge graph</span>
+          </div>
+        </article>
+
+        <article class="phase-card">
+          <div class="phase-num">03</div>
+          <div class="phase-caption">
+            <span class="lang-fr">Décision</span>
+            <span class="lang-en">Decision</span>
+          </div>
+          <h3 class="phase-title">
+            <span class="lang-fr">Rendre les données lisibles, actionnables et challengeables</span>
+            <span class="lang-en">Make data readable, actionable and challengeable</span>
+          </h3>
+          <p class="phase-desc">
+            <span class="lang-fr">L’interface finale doit rendre compréhensibles les informations utiles à la décision, tout en offrant une couche LLM capable de challenger les conclusions, proposer des alternatives et guider l’utilisateur.</span>
+            <span class="lang-en">The final interface must make information understandable for decision-making while offering an LLM layer able to challenge conclusions, suggest alternatives and guide the user.</span>
+          </p>
+          <ul class="phase-list">
+            <li><span class="lang-fr">Dashboards dynamiques, horizon scanning, deep dive, vues globales et vues privées internes.</span><span class="lang-en">Dynamic dashboards, horizon scanning, deep dive, overall views and private internal views.</span></li>
+            <li><span class="lang-fr">Workflows interactifs pour suivi, plans d’actions, incidents, responsables et échéances.</span><span class="lang-en">Interactive workflows for tracking, action plans, incidents, owners and deadlines.</span></li>
+            <li><span class="lang-fr">LLM comme copilote de lecture et de challenge, pas comme arbitre final automatique.</span><span class="lang-en">LLM as a reading and challenge copilot, not as the final automatic decision-maker.</span></li>
+          </ul>
+          <div class="phase-tags">
+            <span class="phase-tag">Dashboards</span>
+            <span class="phase-tag">Dataviz</span>
+            <span class="phase-tag">Alerts</span>
+            <span class="phase-tag">Actions</span>
+          </div>
+        </article>
+      </div>
+      <div class="section-image">
+        <img src="extracted_images/page2_img1.png" alt="Data Connectivity" />
+        <div class="section-image-caption"><span class="lang-fr">Donnees et connectivite</span><span class="lang-en">Data and connectivity</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="schema">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill arch">
+          <span class="lang-fr">Architecture</span>
+          <span class="lang-en">Architecture</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Schéma de fonctionnement général de l'architecture</span>
+          <span class="lang-en">General operating diagram of the framework</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">L'architecture s’organise en six couches distinctes et complémentaires. Chaque couche a un rôle précis, une frontière clairement définie, et s’inscrit dans une boucle continue : les décisions terrain enrichissent la base structurée, qui améliore les modèles, qui rendent le copilote plus pertinent.</span>
+          <span class="lang-en">The framework is organized into six distinct and complementary layers. Each layer has a precise role and clearly defined boundaries, and participates in a continuous loop: field decisions enrich the structured foundation, which improves models, which makes the copilot more relevant.</span>
+        </p>
+      </div>
+
+      <div class="arch-outer reveal">
+
+        <!-- Left: Architecture diagram -->
+        <div class="arch-diagram-wrap">
+
+          <!-- Layer 01 — Sources -->
+          <div class="arch-layer-row sources-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(143,130,255,0.15);color:var(--purple);border:1px solid rgba(143,130,255,0.32);">01</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--purple);">
+                  <span class="lang-fr">Sources de données</span><span class="lang-en">Data sources</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Points d’entrée et origines</span><span class="lang-en">Entry points and origins</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach purple"><span class="lang-fr">Opérateurs &amp; formulaires</span><span class="lang-en">Operators &amp; forms</span></span>
+              <span class="ach purple">IoT / Capteurs / Vision</span>
+              <span class="ach purple">ERP · MES · LIMS</span>
+              <span class="ach purple">RASFF · Open data · APIs</span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row">
+            <div class="arch-vline"></div>
+            <span class="arch-arrow-lbl lang-fr">acquisition multi-canal</span>
+            <span class="arch-arrow-lbl lang-en">multi-channel acquisition</span>
+          </div>
+
+          <!-- Layer 02 — Collecte -->
+          <div class="arch-layer-row collection-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(143,130,255,0.15);color:var(--purple);border:1px solid rgba(143,130,255,0.3);">02</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--purple);">
+                  <span class="lang-fr">Collecte structurée</span><span class="lang-en">Structured collection</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Acquisition, validation, horodatage</span><span class="lang-en">Acquisition, validation, timestamping</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach purple"><span class="lang-fr">C1 · Saisie mobile / OCR / guidée</span><span class="lang-en">C1 · Mobile entry / OCR / guided</span></span>
+              <span class="ach purple"><span class="lang-fr">C2 · Capteurs &amp; mesures continues</span><span class="lang-en">C2 · Continuous sensors &amp; measures</span></span>
+              <span class="ach purple"><span class="lang-fr">C3 · Veille &amp; flux externes</span><span class="lang-en">C3 · Watch &amp; external feeds</span></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row">
+            <div class="arch-vline"></div>
+            <span class="arch-arrow-lbl lang-fr">normalisation, indexation, historisation</span>
+            <span class="arch-arrow-lbl lang-en">normalization, indexing, historization</span>
+          </div>
+
+          <!-- Layer 03 — Base structurée -->
+          <div class="arch-layer-row data-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(81,197,139,0.13);color:var(--green);border:1px solid rgba(81,197,139,0.3);">03</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--green);">
+                  <span class="lang-fr">Base structurée</span><span class="lang-en">Structured foundation</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Données liées, fiables &amp; interrogeables</span><span class="lang-en">Linked, reliable &amp; queryable data</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach green">SQL / NoSQL</span>
+              <span class="ach green"><span class="lang-fr">Séries temporelles</span><span class="lang-en">Time series</span></span>
+              <span class="ach green">Knowledge graph</span>
+              <span class="ach green"><span class="lang-fr">Index de recherche</span><span class="lang-en">Search index</span></span>
+              <span class="ach green"><span class="lang-fr">Vecteurs sémantiques</span><span class="lang-en">Semantic vectors</span></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row">
+            <div class="arch-vline"></div>
+            <span class="arch-arrow-lbl lang-fr">analyse déterministe validée</span>
+            <span class="arch-arrow-lbl lang-en">validated deterministic analysis</span>
+          </div>
+
+          <!-- Layer 04 — Moteur analytique -->
+          <div class="arch-layer-row analytics-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(23,176,181,0.16);color:var(--teal-soft);border:1px solid rgba(23,176,181,0.38);">04</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--teal-soft);">
+                  <span class="lang-fr">Moteur analytique</span><span class="lang-en">Analytics engine</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Déterministe · Fiable · Auditable</span><span class="lang-en">Deterministic · Reliable · Auditable</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach teal">SPC / MSP</span>
+              <span class="ach teal">ARIMA · ETS · Prophet</span>
+              <span class="ach teal">XGBoost · Random Forest</span>
+              <span class="ach teal"><span class="lang-fr">Détection d’anomalies</span><span class="lang-en">Anomaly detection</span></span>
+              <span class="ach teal"><span class="lang-fr">Vision industrielle</span><span class="lang-en">Industrial vision</span></span>
+              <span class="ach teal"><span class="lang-fr">Scoring de risque</span><span class="lang-en">Risk scoring</span></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row">
+            <div class="arch-vline"></div>
+            <span class="arch-arrow-lbl lang-fr">résultats fiables → dialogue &amp; contextualisation</span>
+            <span class="arch-arrow-lbl lang-en">reliable outputs → dialogue &amp; contextualization</span>
+          </div>
+
+          <!-- Layer 05 — Copilote LLM -->
+          <div class="arch-layer-row llm-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(243,138,52,0.16);color:var(--orange-soft);border:1px solid rgba(243,138,52,0.38);">05</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--orange-soft);">
+                  <span class="lang-fr">Copilote LLM</span><span class="lang-en">LLM copilot</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Génératif · Dialogue · Exploration</span><span class="lang-en">Generative · Dialogue · Exploration</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach orange"><span class="lang-fr">Q&amp;A en langage naturel</span><span class="lang-en">Natural language Q&amp;A</span></span>
+              <span class="ach orange"><span class="lang-fr">Reformulation &amp; challenge</span><span class="lang-en">Reformulation &amp; challenge</span></span>
+              <span class="ach orange"><span class="lang-fr">Scénarios “et si”</span><span class="lang-en">“What if” scenarios</span></span>
+              <span class="ach orange"><span class="lang-fr">Synthèse &amp; navigation</span><span class="lang-en">Summary &amp; navigation</span></span>
+              <span class="ach orange"><span class="lang-fr">Bilingue FR / EN</span><span class="lang-en">Bilingual FR / EN</span></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row">
+            <div class="arch-vline"></div>
+            <span class="arch-arrow-lbl lang-fr">décision informée, traçable &amp; documentée</span>
+            <span class="arch-arrow-lbl lang-en">informed, traceable &amp; documented decision</span>
+          </div>
+
+          <!-- Layer 06 — Décision & Action -->
+          <div class="arch-layer-row decision-row">
+            <div class="arch-row-label">
+              <div class="arch-badge" style="background:rgba(255,255,255,0.09);color:var(--text);border:1px solid rgba(255,255,255,0.22);">06</div>
+              <div>
+                <div class="arch-row-name" style="color:var(--text);">
+                  <span class="lang-fr">Décision &amp; Action</span><span class="lang-en">Decision &amp; Action</span>
+                </div>
+                <div class="arch-row-sub">
+                  <span class="lang-fr">Retour terrain &amp; enrichissement continu</span><span class="lang-en">Field feedback &amp; continuous enrichment</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-chips-zone">
+              <span class="ach white"><span class="lang-fr">Dashboards &amp; dataviz</span><span class="lang-en">Dashboards &amp; dataviz</span></span>
+              <span class="ach white"><span class="lang-fr">Plans d’action &amp; workflows</span><span class="lang-en">Action plans &amp; workflows</span></span>
+              <span class="ach white"><span class="lang-fr">Alertes &amp; notifications</span><span class="lang-en">Alerts &amp; notifications</span></span>
+              <span class="ach white"><span class="lang-fr">Traçabilité &amp; audit</span><span class="lang-en">Traceability &amp; audit</span></span>
+            </div>
+          </div>
+
+          <!-- Feedback loop indicator -->
+          <div class="arch-feedback-row">
+            <div class="arch-feedback-label">
+              <span class="lang-fr">↺  Boucle de valeur — chaque décision, incident ou validation enrichit la base (couche 03), améliore les modèles (couche 04) et rend le copilote plus pertinent (couche 05)</span>
+              <span class="lang-en">↺  Value loop — each decision, incident or validation enriches the foundation (layer 03), improves models (layer 04) and makes the copilot more relevant (layer 05)</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="section-image">
+          <img src="extracted_images/page3_img1.png" alt="Analytics AI" />
+          <div class="section-image-caption"><span class="lang-fr">Moteur analytique et IA</span><span class="lang-en">Analytics engine and AI</span></div>
+        </div>
+
+        <!-- Right: Key principles -->
+        <div class="schema-side">
+          <article class="schema-callout">
+            <strong>
+              <span class="lang-fr">Positionnement du LLM</span>
+              <span class="lang-en">LLM positioning</span>
+            </strong>
+            <p>
+              <span class="lang-fr">Le copilote LLM se situe au-dessus de la couche analytique (couche 04). Il lit les résultats fiables, les contextualise et les rend navigables en langage naturel. Il ne remplace jamais un seuil validé, une mesure capteur ou un modèle prédictif industrialisé.</span>
+              <span class="lang-en">The LLM copilot sits above the analytics layer (layer 04). It reads reliable outputs, contextualizes them and makes them navigable in natural language. It never replaces a validated threshold, a sensor measurement or an industrialized predictive model.</span>
+            </p>
+          </article>
+
+          <article class="schema-callout">
+            <strong>
+              <span class="lang-fr">Règle d’or</span>
+              <span class="lang-en">Golden rule</span>
+            </strong>
+            <p>
+              <span class="lang-fr">Le génératif aide à penser, explorer et communiquer. Le déterministe aide à conclure, mesurer, classer, prédire et déclencher des actions fiables. Les deux couches sont complémentaires et non interchangeables.</span>
+              <span class="lang-en">Generative AI helps think, explore and communicate. Deterministic systems help conclude, measure, classify, predict and trigger reliable actions. The two layers are complementary and non-interchangeable.</span>
+            </p>
+          </article>
+
+          <article class="schema-callout">
+            <strong>
+              <span class="lang-fr">Boucle de valeur</span>
+              <span class="lang-en">Value loop</span>
+            </strong>
+            <p>
+              <span class="lang-fr">Chaque décision, incident, correction ou validation enrichit la base structurée, améliore les analyses futures et rend le copilote conversationnel plus pertinent au fil du temps.</span>
+              <span class="lang-en">Each decision, incident, correction or validation enriches the structured foundation, improves future analytics and makes the conversational copilot more relevant over time.</span>
+            </p>
+          </article>
+
+          <article class="schema-callout">
+            <strong>
+              <span class="lang-fr">Frontières claires</span>
+              <span class="lang-en">Clear boundaries</span>
+            </strong>
+            <p>
+              <span class="lang-fr">Chaque couche est documentée et isolée. Une erreur dans la couche analytique n’affecte pas la base de données. Le LLM ne réécrit pas les données — il les lit, les questionne et les traduit.</span>
+              <span class="lang-en">Each layer is documented and isolated. An error in the analytics layer does not affect the data foundation. The LLM does not rewrite data — it reads, questions and translates it.</span>
+            </p>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboards">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill dual">
+          <span class="lang-fr">Décision & UX</span>
+          <span class="lang-en">Decision & UX</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Quels front ends et quels usages métiers montrer</span>
+          <span class="lang-en">Which front ends and business uses to present</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">Pour être crédible, l'architecture doit montrer non seulement les modèles, mais aussi les interfaces qui les rendent utiles : tableaux de bord, vues d’incidents, horizon scanning, plans d’actions et copilote LLM.</span>
+          <span class="lang-en">To be credible, the framework must show not only models but also the interfaces that make them useful: dashboards, incident views, horizon scanning, action plans and an LLM copilot.</span>
+        </p>
+      </div>
+
+      <div class="dashboard-grid reveal">
+        <article class="dashboard-card">
+          <h3 class="dashboard-title">
+            <span class="lang-fr">Dashboard exécutif</span>
+            <span class="lang-en">Executive dashboard</span>
+          </h3>
+          <ul class="dashboard-list">
+            <li><span class="lang-fr">Vue synthèse des KPIs, alertes, tendances, dérives, risques montants.</span><span class="lang-en">Summary view of KPIs, alerts, trends, drifts and rising risks.</span></li>
+            <li><span class="lang-fr">Séparation claire entre données générales partagées et données privées internes.</span><span class="lang-en">Clear separation between shared general data and private internal data.</span></li>
+            <li><span class="lang-fr">Horizon scanning pour signaux faibles, veille réglementaire et signaux fournisseurs.</span><span class="lang-en">Horizon scanning for weak signals, regulatory watch and supplier signals.</span></li>
+          </ul>
+          <div class="dashboard-micro">
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Vision globale</span><span class="lang-en">Global view</span><strong>92%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:92%"></div></div>
+            </div>
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Drill-down</span><span class="lang-en">Drill-down</span><strong>84%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:84%"></div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dashboard-card">
+          <h3 class="dashboard-title">
+            <span class="lang-fr">Vue opérationnelle</span>
+            <span class="lang-en">Operational view</span>
+          </h3>
+          <ul class="dashboard-list">
+            <li><span class="lang-fr">Suivi des plans d’actions, responsables, échéances, statuts, preuves et commentaires.</span><span class="lang-en">Tracking of action plans, owners, deadlines, statuses, evidence and comments.</span></li>
+            <li><span class="lang-fr">Historique d’incidents, non-conformités, causes racines et mesures correctives.</span><span class="lang-en">History of incidents, deviations, root causes and corrective actions.</span></li>
+            <li><span class="lang-fr">Interaction continue avec la couche collecte pour reboucler et enrichir la donnée.</span><span class="lang-en">Continuous interaction with the collection layer to loop back and enrich data.</span></li>
+          </ul>
+          <div class="dashboard-micro">
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Suivi d’actions</span><span class="lang-en">Action tracking</span><strong>88%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:88%"></div></div>
+            </div>
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Traçabilité</span><span class="lang-en">Traceability</span><strong>95%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:95%"></div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dashboard-card">
+          <h3 class="dashboard-title">
+            <span class="lang-fr">Copilote conversationnel</span>
+            <span class="lang-en">Conversational copilot</span>
+          </h3>
+          <ul class="dashboard-list">
+            <li><span class="lang-fr">Permet de questionner les données, challenger une conclusion, demander une autre lecture.</span><span class="lang-en">Allows users to query data, challenge a conclusion and ask for an alternative reading.</span></li>
+            <li><span class="lang-fr">Doit citer ses sources internes, ses filtres utilisés et les limites de son interprétation.</span><span class="lang-en">Must cite internal sources, filters used and the limits of its interpretation.</span></li>
+            <li><span class="lang-fr">Ne remplace pas la décision métier ni la règle statistique documentée.</span><span class="lang-en">Does not replace business judgment or a documented statistical rule.</span></li>
+          </ul>
+          <div class="dashboard-micro">
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Explicabilité</span><span class="lang-en">Explainability</span><strong>91%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:91%"></div></div>
+            </div>
+            <div class="dashboard-bar">
+              <span><span class="lang-fr">Challenge des hypothèses</span><span class="lang-en">Hypothesis challenge</span><strong>79%</strong></span>
+              <div class="dashboard-track"><div class="dashboard-fill" style="width:79%"></div></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="explorer">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill dual">
+          <span class="lang-fr">Briques fondamentales</span>
+          <span class="lang-en">Core building blocks</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Les six briques fondamentales de l’architecture</span>
+          <span class="lang-en">The six core building blocks of the architecture</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">Chaque brique a un périmètre précis, une logique de fiabilité définie et une place identifiée dans la chaîne de valeur. Le recto présente la brique et ses capacités clés. Le verso expose son rôle métier, ses conditions de fiabilité et ses articulations avec les autres couches.</span>
+          <span class="lang-en">Each building block has a precise scope, a defined reliability logic and an identified place in the value chain. The front presents the block and its key capabilities. The back exposes its business role, reliability conditions and connections to other layers.</span>
+        </p>
+      </div>
+
+      <div class="flip-grid reveal">
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">
+                <span class="lang-fr">Collecte</span>
+                <span class="lang-en">Collection</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Apps terrain et digitalisation du papier</span>
+                <span class="lang-en">Field apps and paper digitization</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">Interface opérateur pour transformer le papier en données exploitables via mobile, tablette, poste fixe et OCR.</span>
+                <span class="lang-en">Operator interface to transform paper into usable data through mobile, tablet, desktop and OCR.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>01</strong>
+                <span><span class="lang-fr">Point d’entrée</span><span class="lang-en">Entry point</span></span>
+              </div>
+              <div class="flip-actions">
+                <button class="flip-toggle" type="button">
+                  <span class="lang-fr">Voir détails</span>
+                  <span class="lang-en">See details</span>
+                </button>
+              </div>
+            </div>
+            <div class="flip-face back">
+              <h3 class="flip-title">
+                <span class="lang-fr">Ce qu’il faut montrer</span>
+                <span class="lang-en">What to show</span>
+              </h3>
+              <ul class="flip-list">
+                <li><span class="lang-fr">Formulaires guidés, validation des champs, horodatage, signatures et preuves.</span><span class="lang-en">Guided forms, field validation, timestamps, signatures and evidence.</span></li>
+                <li><span class="lang-fr">OCR assisté + revue humaine avant intégration définitive.</span><span class="lang-en">Assisted OCR + human review before final ingestion.</span></li>
+                <li><span class="lang-fr">Mode offline / resynchronisation selon les environnements terrain.</span><span class="lang-en">Offline mode / resynchronization depending on field conditions.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">
+                <span class="lang-fr">Automatique</span>
+                <span class="lang-en">Automated</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Capteurs, caméras et sondes multi-paramètres</span>
+                <span class="lang-en">Sensors, cameras and multi-parameter probes</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">Collecte continue ou quasi continue pour surveillance environnementale, process et contrôle visuel.</span>
+                <span class="lang-en">Continuous or near-continuous collection for environmental, process and visual monitoring.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>24/7</strong>
+                <span><span class="lang-fr">Surveillance</span><span class="lang-en">Monitoring</span></span>
+              </div>
+              <div class="flip-actions">
+                <button class="flip-toggle" type="button">
+                  <span class="lang-fr">Voir détails</span>
+                  <span class="lang-en">See details</span>
+                </button>
+              </div>
+            </div>
+            <div class="flip-face back">
+              <h3 class="flip-title">
+                <span class="lang-fr">Logique de fiabilité</span>
+                <span class="lang-en">Reliability logic</span>
+              </h3>
+              <ul class="flip-list">
+                <li><span class="lang-fr">Seuils documentés, calibration, fréquence d’acquisition et qualité signal.</span><span class="lang-en">Documented thresholds, calibration, acquisition frequency and signal quality.</span></li>
+                <li><span class="lang-fr">Vision industrielle couplée à des règles explicites et à des métriques de performance.</span><span class="lang-en">Industrial vision coupled with explicit rules and performance metrics.</span></li>
+                <li><span class="lang-fr">Événements, alertes et historiques réinjectés dans la base structurée.</span><span class="lang-en">Events, alerts and history reinjected into the structured foundation.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">
+                <span class="lang-fr">Sources externes</span>
+                <span class="lang-en">External sources</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Veille automatisée et intégrations data</span>
+                <span class="lang-en">Automated watch and data integrations</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">Connexion à des bases internes, newsletters, open data, bases privées et sources réglementaires.</span>
+                <span class="lang-en">Connection to internal databases, newsletters, open data, private bases and regulatory sources.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>API</strong>
+                <span><span class="lang-fr">Connecteurs</span><span class="lang-en">Connectors</span></span>
+              </div>
+              <div class="flip-actions">
+                <button class="flip-toggle" type="button">
+                  <span class="lang-fr">Voir détails</span>
+                  <span class="lang-en">See details</span>
+                </button>
+              </div>
+            </div>
+            <div class="flip-face back">
+              <h3 class="flip-title">
+                <span class="lang-fr">Points d’attention</span>
+                <span class="lang-en">Watch points</span>
+              </h3>
+              <ul class="flip-list">
+                <li><span class="lang-fr">Normalisation des taxonomies, mapping des entités et déduplication.</span><span class="lang-en">Taxonomy normalization, entity mapping and deduplication.</span></li>
+                <li><span class="lang-fr">Différenciation sources publiques, internes, contractuelles et sensibles.</span><span class="lang-en">Differentiate public, internal, contractual and sensitive sources.</span></li>
+                <li><span class="lang-fr">Versionnage, provenance et fréquence de mise à jour.</span><span class="lang-en">Versioning, provenance and refresh frequency.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">
+                <span class="lang-fr">Analyse fiable</span>
+                <span class="lang-en">Reliable analytics</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Moteurs statistiques et prédictifs documentés</span>
+                <span class="lang-en">Documented statistical and predictive engines</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">Utiliser les bonnes méthodes selon le cas : séries temporelles, classification, scoring, détection d’anomalies, surveillance de dérive.</span>
+                <span class="lang-en">Use the right methods for the right case: time series, classification, scoring, anomaly detection, drift monitoring.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>ARIMA+</strong>
+                <span><span class="lang-fr">Méthodes</span><span class="lang-en">Methods</span></span>
+              </div>
+              <div class="flip-actions">
+                <button class="flip-toggle" type="button">
+                  <span class="lang-fr">Voir détails</span>
+                  <span class="lang-en">See details</span>
+                </button>
+              </div>
+            </div>
+            <div class="flip-face back">
+              <h3 class="flip-title">
+                <span class="lang-fr">Exemples à citer</span>
+                <span class="lang-en">Examples to cite</span>
+              </h3>
+              <ul class="flip-list">
+                <li><span class="lang-fr">ARIMA / ETS / Prophet pour la prévision temporelle et saisonnière.</span><span class="lang-en">ARIMA / ETS / Prophet for time and seasonal forecasting.</span></li>
+                <li><span class="lang-fr">Random Forest, XGBoost, régression logistique pour scoring et classification.</span><span class="lang-en">Random Forest, XGBoost, logistic regression for scoring and classification.</span></li>
+                <li><span class="lang-fr">SPC, cartes de contrôle, z-score, EWMA, CUSUM pour monitoring robuste.</span><span class="lang-en">SPC, control charts, z-score, EWMA, CUSUM for robust monitoring.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker generative">
+                <span class="lang-fr">Copilote LLM</span>
+                <span class="lang-en">LLM copilot</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Échange utilisateur et lecture intelligente des données</span>
+                <span class="lang-en">User dialogue and intelligent reading of data</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">Le LLM sert à questionner, résumer, challenger et proposer, en gardant visible ce qui vient des sources et ce qui relève de l’interprétation.</span>
+                <span class="lang-en">The LLM is used to question, summarize, challenge and suggest, while keeping visible what comes from sources and what comes from interpretation.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>RAG</strong>
+                <span><span class="lang-fr">Ancrage</span><span class="lang-en">Grounding</span></span>
+              </div>
+              <div class="flip-actions">
+                <button class="flip-toggle" type="button">
+                  <span class="lang-fr">Voir détails</span>
+                  <span class="lang-en">See details</span>
+                </button>
+              </div>
+            </div>
+            <div class="flip-face back">
+              <h3 class="flip-title">
+                <span class="lang-fr">Usages pertinents</span>
+                <span class="lang-en">Relevant uses</span>
+              </h3>
+              <ul class="flip-list">
+                <li><span class="lang-fr">Questionner une tendance, demander des explications, rechercher un précédent similaire.</span><span class="lang-en">Question a trend, ask for explanations, search for a similar precedent.</span></li>
+                <li><span class="lang-fr">Préparer une note d’aide à la décision ou plusieurs scénarios d’action.</span><span class="lang-en">Prepare a decision brief or several action scenarios.</span></li>
+                <li><span class="lang-fr">Rester sous garde-fous : citations, filtres, droits, logs et validation humaine.</span><span class="lang-en">Remain under guardrails: citations, filters, permissions, logs and human validation.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">
+                <span class="lang-fr">Pilotage</span>
+                <span class="lang-en">Execution</span>
+              </div>
+              <h3 class="flip-title">
+                <span class="lang-fr">Plans d’actions, workflows et rebouclage métier</span>
+                <span class="lang-en">Action plans, workflows and business feedback loop</span>
+              </h3>
+              <p class="flip-desc">
+                <span class="lang-fr">La valeur vient de la capacité à passer des données à l’action puis à réinjecter les décisions et résultats dans la base.</span>
+                <span class="lang-en">The value comes from the ability to move from data to action and then feed decisions and results back into the foundation.</span>
+              </p>
+              <div class="flip-metric">
+                <strong>Loop</strong>
+                <span><span class="lang-fr">Amélioration</span><span class="lang-en">Improvement</span></span>
+              </div>
+<button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li><span class="lang-fr">Cartes de contrôle, UCL/LCL.</span><span class="lang-en">Control charts, UCL/LCL.</span></li>
+                <li><span class="lang-fr">Détection avant seuil.</span><span class="lang-en">Anomaly before threshold.</span></li>
+              </ul>
+              <div class="flip-actions">
+                <button class="flip-close" type="button">
+                  <span class="lang-fr">Revenir</span>
+                  <span class="lang-en">Back</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <section id="roadmap">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill plan">
+          <span class="lang-fr">Conclusion</span>
+          <span class="lang-en">Conclusion</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Une architecture conçue pour durer, évoluer et rester auditable</span>
+          <span class="lang-en">A framework built to last, scale and remain fully auditable</span>
+        </h2>
+        <p class="section-desc">
+          <span class="lang-fr">L'architecture proposée repose sur quatre principes non négociables : la séparation des responsabilités entre couches, la traçabilité totale des décisions, la capitalisation progressive par les données terrain, et la complémentarité stricte entre IA générative et moteurs déterministes.</span>
+          <span class="lang-en">The proposed architecture rests on four non-negotiable principles: separation of responsibilities between layers, full traceability of decisions, progressive capitalization through field data, and strict complementarity between generative AI and deterministic engines.</span>
+        </p>
+      </div>
+
+      <div class="roadmap-grid reveal">
+        <article class="roadmap-card">
+          <div class="roadmap-step">I</div>
+          <h3 class="roadmap-title">
+            <span class="lang-fr">Architecture modulaire et résiliente</span>
+            <span class="lang-en">Modular and resilient architecture</span>
+          </h3>
+          <ul class="roadmap-list">
+            <li><span class="lang-fr">Chaque couche est indépendante.</span><span class="lang-en">Each layer is independent.</span></li>
+            <li><span class="lang-fr">Le LLM peut être remplacé sans affecter les moteurs.</span><span class="lang-en">LLM can be replaced without affecting engines.</span></li>
+          </ul>
+        </article>
+
+        <article class="roadmap-card">
+          <div class="roadmap-step">II</div>
+          <h3 class="roadmap-title">
+            <span class="lang-fr">Traçabilité et auditabilité totales</span>
+            <span class="lang-en">Full traceability and auditability</span>
+          </h3>
+          <ul class="roadmap-list">
+            <li><span class="lang-fr">Chaque résultat est horodaté et documenté.</span><span class="lang-en">Every result is timestamped and documented.</span></li>
+            <li><span class="lang-fr">Décisions traçables de la collecte à l'action.</span><span class="lang-en">Traceable decisions from collection to action.</span></li>
+          </ul>
+        </article>
+
+        <article class="roadmap-card">
+          <div class="roadmap-step">III</div>
+          <h3 class="roadmap-title">
+            <span class="lang-fr">Capitalisation progressive par les données</span>
+            <span class="lang-en">Progressive capitalization through data</span>
+          </h3>
+          <ul class="roadmap-list">
+            <li><span class="lang-fr">Le système s'améliore à chaque cycle.</span><span class="lang-en">System improves with every cycle.</span></li>
+            <li><span class="lang-fr">Valeur cumulative et proportionnelle à l'historique.</span><span class="lang-en">Value cumulative and proportional to history.</span></li>
+          </ul>
+        </article>
+
+        <article class="roadmap-card">
+          <div class="roadmap-step">IV</div>
+          <h3 class="roadmap-title">
+            <span class="lang-fr">Gouvernance claire des deux couches IA</span>
+            <span class="lang-en">Clear governance of both AI layers</span>
+          </h3>
+          <ul class="roadmap-list">
+            <li><span class="lang-fr">Le déterministe conclude, le génératif questionne.</span><span class="lang-en">Deterministic concludes, generative questions.</span></li>
+            <li><span class="lang-fr">Frontière documentée et non négociable.</span><span class="lang-en">Documented and non-negotiable boundary.</span></li>
+          </ul>
+        </article>
+      </div>
+      <div class="section-image">
+        <img src="extracted_images/page5_img1.png" alt="Benefits ROI" />
+        <div class="section-image-caption"><span class="lang-fr">Benefits et ROI</span><span class="lang-en">Benefits and ROI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="glossary">
+    <div class="container">
+      <div class="section-intro reveal">
+        <div class="section-pill arch">
+          <span class="lang-fr">Lexique</span>
+          <span class="lang-en">Glossary</span>
+        </div>
+        <h2 class="section-title">
+          <span class="lang-fr">Glossaire des termes et concepts</span>
+          <span class="lang-en">Terms and concepts glossary</span>
+        </h2>
+      </div>
+
+      <div class="glossary-grid reveal">
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">LLM</div>
+              <h3 class="flip-title">Large Language Model</h3>
+              <p class="flip-desc">Modèle de langage grande échelle pour dialogue et exploration.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>GPT, Claude, Gemini</li>
+                <li>Copilote conversationnel</li>
+                <li>RAG pour ancrage</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">SPC/MSP</div>
+              <h3 class="flip-title">Statistical Process Control</h3>
+              <p class="flip-desc">Maîtrise Statistique des Processus — surveillance qualité temps réel.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Cartes de contrôle, UCL/LCL</li>
+                <li>Détection avant seuil</li>
+                <li> EWMA, CUSUM</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">IoT</div>
+              <h3 class="flip-title">Internet of Things</h3>
+              <p class="flip-desc">Réseau d'objets connectés — capteurs et dispositifs.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Température, humidité, CO₂, pH</li>
+                <li>Collecte quasi continue</li>
+                <li>Capteurs, caméras</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker generative">RAG</div>
+              <h3 class="flip-title">Retrieval Augmented Gen.</h3>
+              <p class="flip-desc">Génération augmentée par récupération — ancrage sur sources.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Citations, traçabilité</li>
+                <li>Limites d'usage</li>
+                <li>Sources indexées</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">RASFF</div>
+              <h3 class="flip-title">Rapid Alert System</h3>
+              <p class="flip-desc">Système d'alerte rapide UE pour sécurité alimentaire.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Veille automatisée</li>
+                <li>Notifications</li>
+                <li>Alertes en temps réel</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">ARIMA</div>
+              <h3 class="flip-title">AutoRegr. Integ. Mov. Avg.</h3>
+              <p class="flip-desc">Modèles de séries temporelles pour prévision.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Prévision temporelle</li>
+                <li>Saisonnalité</li>
+                <li>ETS, Prophet</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">XGBoost</div>
+              <h3 class="flip-title">eXtreme Gradient Boosting</h3>
+              <p class="flip-desc">Algorithme de classification et scoring par arbres.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Risque fournisseur</li>
+                <li>Classification</li>
+                <li>Random Forest</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">OCR</div>
+              <h3 class="flip-title">Optical Char. Recognition</h3>
+              <p class="flip-desc">Reconnaissance de caractères — papier vers numérique.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Formulaires scannés</li>
+                <li>Revue humaine</li>
+                <li>Validation</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">Vision AI</div>
+              <h3 class="flip-title">Vision industrielle</h3>
+              <p class="flip-desc">IA pour inspection visuelle automatisée.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Détection défauts</li>
+                <li>Contrôle conformité</li>
+                <li>Caméras, règles</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">Bayésien</div>
+              <h3 class="flip-title">Modèle bayésien</h3>
+              <p class="flip-desc">Approche probabiliste pour inférence et prédiction.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Incertitude quantifiée</li>
+                <li>Mise à jour itérative</li>
+                <li>Estimation postérieure</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">ERP</div>
+              <h3 class="flip-title">Enterprise Resource Planning</h3>
+              <p class="flip-desc">Système de gestion intégré des ressources.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Production, stocks</li>
+                <li>Finances</li>
+                <li>Intégration données</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">MES</div>
+              <h3 class="flip-title">Manufacturing Exec. System</h3>
+              <p class="flip-desc">Système de pilotage de la production.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Ordonnancement</li>
+                <li>Traçabilité</li>
+                <li>Temps réel</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">LIMS</div>
+              <h3 class="flip-title">Lab Information MS</h3>
+              <p class="flip-desc">Gestion des données laboratoire.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Résultats analytiques</li>
+                <li>Échantillons</li>
+                <li>Normes ISO</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker deterministic">API</div>
+              <h3 class="flip-title">Application Programming I.</h3>
+              <p class="flip-desc">Interface de programmation pour échanges de données.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Connexion systèmes</li>
+                <li>Automatisation</li>
+                <li>Web services</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="flip-card" data-flip-card>
+          <div class="flip-inner">
+            <div class="flip-face front">
+              <div class="flip-kicker foundation">KG</div>
+              <h3 class="flip-title">Knowledge Graph</h3>
+              <p class="flip-desc">Graphe de connaissances pour relations entre entités.</p>
+              <button class="flip-icon-btn" type="button" aria-label="Flip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flip-face back">
+              <ul class="flip-list">
+                <li>Entités, relations</li>
+                <li>Requêtes complexes</li>
+                <li>Graph DB</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div>
+      <span class="lang-fr">Framework IA Food Safety - Architecture stratégique pour la sécurité alimentaire.</span>
+      <span class="lang-en">AI Food Safety Framework - Strategic architecture for food safety.</span>
+    </div>
+    <div>
+      <a href="https://visipilot.com" target="_blank" rel="noopener" style="color: var(--teal-soft); text-decoration: none;">visipilot.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const body = document.body;
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const sections = ['hero', 'principles', 'phases', 'schema', 'explorer', 'roadmap', 'glossary'];
+
+  function setLanguage(lang) {
+    body.dataset.lang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.langValue === lang);
+    });
+    localStorage.setItem('ai-food-safety-lang', lang);
+  }
+
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleMobileMenu() {
+    const isOpen = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  function scrollToSection(id) {
+    const target = document.getElementById(id);
+    const nav = document.querySelector('nav');
+    if (!target) return;
+    const offset = nav ? nav.offsetHeight + 18 : 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    closeMobileMenu();
+  }
+
+  function updateActiveNav() {
+    const marker = window.scrollY + 180;
+    let current = sections[0];
+    sections.forEach(id => {
+      const section = document.getElementById(id);
+      if (section && section.offsetTop <= marker) current = id;
+    });
+    document.querySelectorAll('[data-scroll-target]').forEach(button => {
+      button.classList.toggle('active', button.dataset.scrollTarget === current && button.classList.contains('nav-link'));
+    });
+  }
+
+  function updateProgress() {
+    const progress = document.getElementById('scroll-progress');
+    const max = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const value = max > 0 ? (window.scrollY / max) * 100 : 0;
+    progress.style.width = value + '%';
+  }
+
+  function initFlipCards() {
+    document.querySelectorAll('[data-flip-card]').forEach(card => {
+      const btn = card.querySelector('.flip-icon-btn') || card.querySelector('.flip-toggle');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const isFlipped = card.classList.contains('flipped');
+          document.querySelectorAll('[data-flip-card].flipped').forEach(openCard => {
+            if (openCard !== card) openCard.classList.remove('flipped');
+          });
+          if (isFlipped) {
+            card.classList.remove('flipped');
+          } else {
+            card.classList.add('flipped');
+          }
+        });
+      }
+    });
+  }
+
+  document.querySelectorAll('.flip-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('[data-flip-card]');
+      if (card) card.classList.remove('flipped');
+    });
+  });
+
+  function initReveal() {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(node => observer.observe(node));
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(button => {
+    button.addEventListener('click', () => setLanguage(button.dataset.langValue));
+  });
+
+  document.querySelectorAll('[data-scroll-target]').forEach(button => {
+    button.addEventListener('click', () => scrollToSection(button.dataset.scrollTarget));
+  });
+
+  if (menuBtn) menuBtn.addEventListener('click', toggleMobileMenu);
+
+  document.addEventListener('click', event => {
+    const insideNav = event.target.closest('nav');
+    if (!insideNav) closeMobileMenu();
+    if (!event.target.closest('[data-flip-card]')) {
+      document.querySelectorAll('[data-flip-card].flipped').forEach(card => card.classList.remove('flipped'));
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeMobileMenu();
+      document.querySelectorAll('[data-flip-card].flipped').forEach(card => card.classList.remove('flipped'));
+    }
+  });
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  const savedLang = localStorage.getItem('ai-food-safety-lang') || 'fr';
+  setLanguage(savedLang);
+  initFlipCards();
+  initReveal();
+  updateActiveNav();
+  updateProgress();
+</script>
+
+</body>
+</html>
